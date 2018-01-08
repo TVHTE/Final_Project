@@ -12,4 +12,4 @@ The visualisation of the world's environment is still lacking attention. This is
 
 Global oil consumption.
 
-![alt text](https://www.google.nl/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&cad=rja&uact=8&ved=0ahUKEwi_0e_czMjYAhUSzqQKHYjBCA4QjRwIBw&url=http%3A%2F%2Fwww.d3noob.org%2F2013%2F03%2Fa-simple-d3js-map-explained.html&psig=AOvVaw2bzvoKrV5VX8P9Bup5KGlK&ust=1515508892402483)
+![alt text]()
