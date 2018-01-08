@@ -14,3 +14,7 @@ Global oil consumption.
 
 ### Sketch
 ![alt text](https://github.com/TVHTE/Final_Project/blob/master/schets.png)
+
+## Prerequisites
+
+Data: databank, worldbank
