@@ -6,4 +6,8 @@
     which is easy to use in javascript
     * Probably some d3 tutorials in order to create nice visualisations
     * Bootstrap to create a nice UI 
+    
+## Diagram
+
+![alt text](https://github.com/TVHTE/Final_Project/blob/master/design_diagram.png)
 
