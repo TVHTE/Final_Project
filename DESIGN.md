@@ -1,7 +1,7 @@
 # Design
 
 The design of the project consists of several components. firstly the raw data needs to be converted
-into data that can be used in the functions that will be made to draw graphs.
+into data that can be used in the functions that will be made to draw graphs. 
 
 ## Sources
     * Data worldbank, This site contains information about energy consumption for nearly all countries.
