@@ -13,7 +13,7 @@ The visualisation of the world's environment is still lacking attention. This is
 Global oil consumption.
 
 ### Sketch
-![alt text](https://github.com/TVHTE/Final_Project/blob/master/schets.png)
+![alt text](https://github.com/TVHTE/Final_Project/blob/master/doc/schets.png)
 
 ## Prerequisites
 
