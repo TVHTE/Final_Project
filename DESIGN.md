@@ -6,3 +6,9 @@
     which is easy to use in javascript
     * Probably some d3 tutorials in order to create nice visualisations
     * Bootstrap to create a nice UI 
+
+```xml
+<myxml>
+   <someElement />  
+</myxml>
+```
