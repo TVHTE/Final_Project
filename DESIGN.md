@@ -9,5 +9,5 @@
     
 ## Diagram
 
-![alt text](https://github.com/TVHTE/Final_Project/blob/master/design_diagram.png)
+![alt text](https://github.com/TVHTE/Final_Project/blob/master/doc/design_diagram.png)
 
