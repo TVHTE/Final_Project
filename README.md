@@ -1,7 +1,9 @@
 # Final Project
 
 University of Amsterdam
+
 Minor Programming
+
 Toon van Holthe tot Echten - 10798595
 
 ## Problem statement
