@@ -22,58 +22,34 @@ def reformat_txt(raw_data):
     with raw_data as in_file:
 
         next(raw_data)
-        
+
         for line in raw_data:
             tmp_data.append(line.strip().split(','))
 
         list_dict = []
-        i = 0
-        j = 0
-        values = []
 
         for line in tmp_data:
-            list_dict.append({'CC':line[1].strip("\""),'TYPE':type})
+            if len(line[0]) == 5:
+                list_dict.append({'CC':line[0].strip("\""),'CLASS':line[2].strip('\"')})
 
-            # check for outliers
-            for el in line[6:]:
-                j+=1
-                if j > 58:
-                    del line[-1]
-
-            # convert no values to nan and values to floats
-            for el in line[6:]:
-                el = el.strip("\"")
-                if el == '':
-                    # el = np.nan
-                    el = 0
-                else:
-                    el = float(el)
-                values.append(el)
-
-            j = 0
-
-        new_dict  = []
-
-        # get all years
-        for line in list_dict:
-            for i in range(2017-1960+1):
-                year = 1960 + i
-                line.update({'YEAR':year})
-                new_dict.append(copy.deepcopy(line))
-                i += 1
-
-        print(len(values))
-        print(len(new_dict))
-
-        #  add values to dict
-        for i in range(len(values)):
-            new_dict[i]['VALUE'] = values[i]
+        for el in list_dict:
+            print(el['CLASS'])
+            if el['CLASS'] == 'High income':
+                el['CLASS'] = 4
+            elif el['CLASS'] == 'Upper middle income':
+                el['CLASS'] = 3
+            elif el['CLASS'] == 'Lower middle income':
+                el['CLASS'] = 2
+            elif el['CLASS'] == 'Low income':
+                el['CLASS'] = 1
+            else:
+                el['CLASS'] = 0
 
         # write data
-        json_data = json.dumps(new_dict)
+        json_data = json.dumps(list_dict)
         j = json.loads(json_data)
 
-        with open('DATA_FOSL.json', 'w') as outfile:
+        with open('META.json', 'w') as outfile:
             json.dump(j, outfile)
 
 reformat_txt(raw_data)

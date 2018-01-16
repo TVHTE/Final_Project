@@ -9,36 +9,56 @@
 queue()
   .defer(d3.json, "/data/DATA_FOSL.json")
   .defer(d3.json, "/data/DATA_REN.json")
+  .defer(d3.json, "/data/META.json")
   .await(analyze);
 
-  function analyze(error, FOSL, REN) {
+  function analyze(error, FOSL, REN, META) {
     if(error) { console.log(error); }
 
+    var dataset = {}
+
+    var onlyValues = META.map(function(obj){ return obj['CLASS']; });
+    var minValue = Math.min.apply(null, onlyValues),
+            maxValue = Math.max.apply(null, onlyValues);
+
+    var paletteScale = d3.scale.linear()
+           .domain([minValue,maxValue])
+           .range(["#EFEFFF","#02386F"]);
+
+    // fill dataset in appropriate format
+    META.forEach(function(item){
+       var iso = item['CC'],
+           value = item['CLASS'];
+           dataset[iso] = { numberOfThings: value, fillColor: paletteScale(value) };
+       });
+
+    console.log(dataset)
+
+    // render map
     var map = new Datamap({
         element: document.getElementById('container'),
-        fills: {
-            HIGH: '#afafaf',
-            LOW: '#123456',
-            MEDIUM: 'blue',
-            UNKNOWN: 'rgb(0,0,0)',
-            defaultFill: 'green'
-        },
-        data: {
-            IRL: {
-                fillKey: 'LOW',
-                numberOfThings: 2002
-            },
-            USA: {
-                fillKey: 'MEDIUM',
-                numberOfThings: 10381
-            }
-        },
+        projection: 'mercator', // big world map
+        // countries don't listed in dataset will be painted with this color
+        fills: { defaultFill: '#F5F5F5' },
+        data: dataset,
         geographyConfig: {
+            borderColor: '#DEDEDE',
+            highlightBorderWidth: 2,
+            // don't change color on mouse hover
+            highlightFillColor: function(geo) {
+                return geo['fillColor'] || '#F5F5F5';
+            },
+            // only change border
+            highlightBorderColor: '#B7B7B7',
+            // show desired information in tooltip
             popupTemplate: function(geo, data) {
-                return ['<div class="hoverinfo"><strong>',
-                         geo.properties.name,
-                        ': ' + data.numberOfThings,
-                        '</strong></div>'].join('');
+                // don't show tooltip if country don't present in dataset
+                if (!data) { return ; }
+                // tooltip content
+                return ['<div class="hoverinfo">',
+                    '<strong>', geo.properties.name, '</strong>',
+                    '<br>Class: <strong>', data.numberOfThings, '</strong>',
+                    '</div>'].join('');
             }
         }
     });
