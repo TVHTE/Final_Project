@@ -1,0 +1,49 @@
+<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+<script src="/data/datamaps.world.min.js"></script>
+<script src="https://d3js.org/queue.v1.min.js"></script>
+
+<div id="container" style="position: relative; width: 1000px; height: 600px;"></div>
+<script>
+
+queue()
+  .defer(d3.json, "/data/DATA_FOSL.json")
+  .defer(d3.json, "/data/DATA_REN.json")
+  .await(analyze);
+
+  function analyze(error, FOSL, REN) {
+    if(error) { console.log(error); }
+
+    var map = new Datamap({
+        element: document.getElementById('container'),
+        fills: {
+            HIGH: '#afafaf',
+            LOW: '#123456',
+            MEDIUM: 'blue',
+            UNKNOWN: 'rgb(0,0,0)',
+            defaultFill: 'green'
+        },
+        data: {
+            IRL: {
+                fillKey: 'LOW',
+                numberOfThings: 2002
+            },
+            USA: {
+                fillKey: 'MEDIUM',
+                numberOfThings: 10381
+            }
+        },
+        geographyConfig: {
+            popupTemplate: function(geo, data) {
+                return ['<div class="hoverinfo"><strong>',
+                         geo.properties.name,
+                        ': ' + data.numberOfThings,
+                        '</strong></div>'].join('');
+            }
+        }
+    });
+}
+
+
+
+</script>
