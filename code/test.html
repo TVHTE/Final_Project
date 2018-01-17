@@ -2,24 +2,135 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
 <script src="/data/datamaps.world.min.js"></script>
 <script src="https://d3js.org/queue.v1.min.js"></script>
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="https://d3js.org/d3-time-format.v2.min.js"></script>
 
 <div id="container" style="position: relative; width: 1000px; height: 600px;"></div>
 <script>
 
-queue()
-  .defer(d3.json, "/data/DATA_FOSL.json")
-  .defer(d3.json, "/data/DATA_REN.json")
-  .defer(d3.json, "/data/META.json")
-  .await(analyze);
+/** FUNCTIONS */
 
-  function analyze(error, FOSL, REN, META) {
+// filter the data from the dataset
+function filterJSON(json, key, value) {
+    var result = [];
+    json.forEach(function(val,idx,arr){
+        if(val[key] == value){
+            result.push(val)
+        }
+    })
+    return result;
+    }
+
+// update the graph according to selected country
+function updateGraph(data) {
+    var color = d3.scale.ordinal().range(["steelblue"]);
+
+    // scale the range of the data
+    x.domain(d3.extent(data, function(d) { return d.YEAR; }));
+    y.domain([d3.min(data, function(d) { return d.VALUE; }), d3.max(data, function(d) { return d.VALUE; })]);
+
+    line_svg.selectAll("text").remove()
+
+    // nest the entries by stad
+    dataNest = d3.nest()
+        .key(function(d) {return d.CC;})
+        .entries(data);
+
+    var result = dataNest.filter(function(val,idx, arr){
+    	  return $("." + val.key).attr("fill") != "#ccc"
+    	  // matching the data with selector status
+    	})
+
+    var country = line_svg.selectAll(".line")
+        .data(result, function(d){return d.key});
+
+    country.enter().append("path")
+        .attr("class", "line")
+        .text(result, function(d){return d.TYPE});
+
+    country.transition()
+    	.style("stroke", function(d,i) { return d.color = color(d.key); })
+    	.attr("id", function(d){ return 'tag'+d.key.replace(/\s+/g, '');}) // assign ID
+    	.attr("d", function(d){
+    		return line(d.values)
+    	});
+
+    country.exit().remove();
+
+    line_svg.selectAll(".axis").remove();
+
+    line_svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+    var yaxis = line_svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+
+    // add a label to the y axis
+    line_svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0 - 60)
+        .attr("x", 0 - (height / 2))
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text(function(d, i){return result[i].values[0]['TYPE']})
+        .attr("class", "y axis label");
+    }
+
+/** VARIABLES */
+
+// margin for map
+var margin = {top: 50, right: 80, bottom: 40, left: 160},
+    width = 1300 - margin.left - margin.right,
+    height = 600 - margin.top - margin.bottom;
+
+// margin for line
+var margin_line = {top: 50, right: 80, bottom: 40, left: 160},
+     width_line = 2000 - margin.left - margin.right,
+     height_line = 1200 - margin.top - margin.bottom;
+
+var x = d3.time.scale().range([0, width]),
+    y = d3.scale.linear().range([height, 0]);
+
+var xAxis = d3.svg.axis().scale(x)
+    .orient("bottom").ticks(5),
+    yAxis = d3.svg.axis().scale(y)
+    .orient("left").ticks(5);
+
+ // svg for line
+var line_svg = d3.select("body")
+    .append("svg")
+        .attr('class', 'line_svg')
+        .attr("width", width_line)
+        .attr("height", height_line)
+    .append("g")
+        .attr("transform",
+              "translate(" + margin.left + "," + margin.top + ")");
+
+// parse the date / time
+var parseTime = d3.time.format("%Y").parse;
+
+// define the line
+var line = d3.svg.line()
+    .x(function(d) { return x(d.YEAR); })
+    .y(function(d) { return y(d.VALUE); });
+
+queue()
+    .defer(d3.json, "/data/DATA_FOSL.json")
+    .defer(d3.json, "/data/DATA_REN.json")
+    .defer(d3.json, "/data/META.json")
+    .await(analyze);
+
+function analyze(error, FOSL, REN, META) {
     if(error) { console.log(error); }
 
     var dataset = {}
 
     var onlyValues = META.map(function(obj){ return obj['CLASS']; });
     var minValue = Math.min.apply(null, onlyValues),
-            maxValue = Math.max.apply(null, onlyValues);
+        maxValue = Math.max.apply(null, onlyValues);
 
     var paletteScale = d3.scale.linear()
            .domain([minValue,maxValue])
@@ -27,16 +138,26 @@ queue()
 
     // fill dataset in appropriate format
     META.forEach(function(item){
-       var iso = item['CC'],
-           value = item['CLASS'];
-           dataset[iso] = { numberOfThings: value, fillColor: paletteScale(value) };
-       });
+        var iso = item['CC'],
+            value = item['CLASS'];
+            dataset[iso] = { income_class: value, fillColor: paletteScale(value) };
+        });
 
     console.log(dataset)
 
     // render map
     var map = new Datamap({
         element: document.getElementById('container'),
+        done: function(datamap) {
+            datamap.svg.selectAll('.datamaps-subunit').on('click', function(geo) {
+                id = geo.id;
+                data_REN = filterJSON(REN,'CC',id);
+                data_FOSL = filterJSON(FOSL,'CC',id)
+                console.log(data_REN)
+                updateGraph(data_REN)
+                updateGraph(data_FOSL)
+            });
+        },
         projection: 'mercator', // big world map
         // countries don't listed in dataset will be painted with this color
         fills: { defaultFill: '#F5F5F5' },
@@ -57,13 +178,11 @@ queue()
                 // tooltip content
                 return ['<div class="hoverinfo">',
                     '<strong>', geo.properties.name, '</strong>',
-                    '<br>Class: <strong>', data.numberOfThings, '</strong>',
+                    '<br>Income category: <strong>', data.income_class, '</strong>',
                     '</div>'].join('');
             }
         }
     });
-    map.legend();
-
 }
 
 

@@ -11,3 +11,10 @@
     met de visualisaties. het invullen van de data bij datamaps is nog niet helemaal gelukt aangezien dit in een andere format moet staan.
     Wel heb ik ervoor gekozen de landen te kleuren aan de hand van inkomensklasse. Daarvoor moet een aparte dataset worden gemaakt. De data kan
     uit de metadata van de gedownloade datasets van de data worldbank worden gehaald.
+
+## 17-1-2018
+
+    Vandaag is de basis voor de line-graph gelegd. Deze is gelinkt aan de wereldkaart. Hier moet alleen nog de style verbeterd worden
+    en moeten er twee lijnen te zien zijn. Het zou mooi zijn het verschil tussen de twee te kleuren in groen als er meer renewable energie
+    wordt opgewekt en rood als er meer fossil wordt opgewekt. Verder moet er voor de derde visualisatie een begin komen morgen en dan hopen dat
+    ze er allemaal staan voor aankomende vrijdag.
