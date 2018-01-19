@@ -12,10 +12,10 @@ import copy
 import numpy as np
 
 # define headers raw data
-raw_data = open("fossil\API_EG.ELC.FOSL.ZS_DS2_en_csv_v2.csv", 'r')
-type = 'FOSL'
+raw_data_FOSL = open("fossil\API_EG.ELC.FOSL.ZS_DS2_en_csv_v2.csv", 'r')
+raw_data_REN = open("renewable\API_EG.ELC.RNWX.ZS_DS2_en_csv_v2.csv", 'r')
 
-def reformat_txt(raw_data):
+def reformat_txt(raw_data, type, output_name):
 
     tmp_data = []
 
@@ -44,7 +44,7 @@ def reformat_txt(raw_data):
                 el = el.strip("\"")
                 if el == '':
                     # el = np.nan
-                    el = 0
+                    el = None
                 else:
                     el = float(el)
                 values.append(el)
@@ -68,11 +68,30 @@ def reformat_txt(raw_data):
         for i in range(len(values)):
             new_dict[i]['VALUE'] = values[i]
 
+        print(new_dict)
+
         # write data
         json_data = json.dumps(new_dict)
         j = json.loads(json_data)
 
-        with open('DATA_FOSL.json', 'w') as outfile:
+        with open(output_name, 'w') as outfile:
             json.dump(j, outfile)
 
-reformat_txt(raw_data)
+reformat_txt(raw_data_FOSL, 'FOSL', 'data_fosl.json')
+reformat_txt(raw_data_REN, 'REN', 'data_ren.json')
+
+def merge_JSON(data_1, data_2, output_name):
+
+    data_1 = json.load(open(data_1))
+    data_2 = json.load(open(data_2))
+
+    data_project = data_1 + data_2
+
+    json_data = json.dumps(data_project)
+    j = json.loads(json_data)
+
+    with open(output_name, 'w') as outfile:
+        json.dump(j, outfile)
+
+
+merge_JSON('data_fosl.json','data_ren.json', 'data_project.json')
