@@ -18,3 +18,12 @@
     en moeten er twee lijnen te zien zijn. Het zou mooi zijn het verschil tussen de twee te kleuren in groen als er meer renewable energie
     wordt opgewekt en rood als er meer fossil wordt opgewekt. Verder moet er voor de derde visualisatie een begin komen morgen en dan hopen dat
     ze er allemaal staan voor aankomende vrijdag.
+
+## 18-1-2018
+
+    Weg gewaaid! Thuis nog even gezeten aan het verbeteren van mijn data
+
+## 19-1-2018
+
+    De wereldkaart en de line-graph zijn gelinked en werken naar behoren. Nu is de derde visualisatie aan bod waarbij de procentuele verandering
+    per source per jaar wordt weergegeven in een grouped-barchart. Hierin kan het jaar worden geselecteerd en binnen de filter json functie de juiste data worden gefiltreerd.
