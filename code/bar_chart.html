@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<style>
+
+.barlabel {
+      font-size:8pt;
+      text-anchor: middle;
+
+    }
+
+</style>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://d3js.org/queue.v1.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<script>
+
+var init_year = 1960;
+
+console.log('hello')
+
+// slider
+d3.select("body").insert("p", ":first-child").append("input")
+    .attr("type", "range")
+    .attr("min", "1960")
+    .attr("max", "2017")
+    .attr("value", init_year)
+    .attr("id", "year");
+
+// init bars container
+var margin = {top: 50, right:10, bottom:50, left:30};
+var svgBarsWidth = 960 - margin.left - margin.right,
+    svgBarsHeight = 200 - margin.top - margin.bottom;
+
+
+var x = d3.scaleBand()
+            .rangeRound([0, svgBarsWidth])
+            .padding(.05);
+var y = d3.scaleLinear().range([svgBarsHeight, 0]);
+
+var svg_bars = d3.select("body")
+    .append("svg")
+      .attr("id", "bars")
+      .attr("width", svgBarsWidth + margin.left + margin.right)
+      .attr("height", svgBarsHeight + margin.top + margin.bottom)
+    .append("g")
+      .attr("class", "bars")
+      .attr("transform", "translate(" + margin.left + ", " + margin.top + ")");
+
+
+queue()
+  .defer(d3.csv, "/data/bar_FOSL.csv")
+  .defer(d3.csv, "/data/bar_REN.csv")
+  .await(analyze);
+
+  function analyze(error, FOSL, REN) {
+      if(error) { console.log(error); }
+
+      console.log(FOSL)
+
+      let data_all = FOSL;
+
+      let data = FOSL[init_year]
+      let color = calcColorScale(FOSL);
+
+      renderBars(color, data);
+
+      // was the slider used?
+     d3.select("#year").on("input", function() {
+         let upd_color = calcColorScale(data_all[this.value]);
+         renderBars(upd_color, data_all[this.value]);
+     });
+  }
+
+      function renderBars(color, data) {
+
+          // turn data into array of objects
+          array = [];
+          for( let key of Object.keys(data) ) {
+            array.push({'id':key, 'value': data[key]});
+          }
+
+          // sort by country id
+          array = sortArrObj(array, 'id');
+
+          x.domain(array.map(function(d) {return d.id;}));
+          y.domain([0, d3.max(Object.values(data), function(d) {return d;})]);
+
+          d3.select("svg#bars g.axis").remove();
+          let axis = d3.select("svg#bars").append("g")
+                      .attr("class", "axis axis--x")
+                      .attr("transform", "translate("+ 30 +"," + (svgBarsHeight+margin.top) + ")")
+                      .call(d3.axisBottom(x))
+                        .selectAll("text")
+                          .style("text-anchor", "end")
+                          .attr("dx", "-.8em")
+                          .attr("dy", ".15em")
+                          .attr("transform", "rotate(-65)");
+
+          let bars = d3.select("svg#bars g.bars").selectAll("rect").data(array);
+          bars.exit().remove();
+          bars.enter().append("rect")
+                .merge(bars)
+                .attr("fill", function(d) { return color(d.value); })
+                .attr("x", function(d) { return x(d.id); })
+                .attr("width", x.bandwidth())
+                .attr("y", function(d) { return y(d.value); })
+                .attr("height", function(d) {return svgBarsHeight - y(d.value); });
+
+          let annot = d3.select("svg#bars g.bars").selectAll("text").data(array);
+          annot.exit().remove();
+          annot.enter().append("text")
+                .merge(annot)
+                .text(function(d) {return d3.format(",")(d.value);})
+                .attr("class", "barlabel")
+                .attr("x", function(d) { return x(d.id) + x.bandwidth()/2; })
+                .attr("y", function(d) { return y(d.value) - 5; });
+            }
+
+            function calcColorScale(data) {
+
+      // TODO: minor, check how many data poins we've got
+      // with few datapoints the resulting legend gets confusing
+
+      // get values and sort
+      let data_values = Object.values(data).sort( function(a, b){ return a-b; });
+
+      quantiles_calc = quantiles.map( function(elem) {
+                      return Math.ceil(d3.quantile(data_values, elem));
+      });
+
+      let scale = d3.scaleQuantile()
+                  .domain(quantiles_calc)
+                  .range(d3.schemeReds[(quantiles_calc.length)-1]);
+
+      return scale;
+    }
+    
+    </script>
