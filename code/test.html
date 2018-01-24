@@ -17,7 +17,8 @@
 
 
 
-<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+<!-- <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script> -->
+<script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
 <script src="/data/datamaps.world.min.js"></script>
 <script src="https://d3js.org/queue.v1.min.js"></script>
@@ -98,6 +99,67 @@ function update_graph(data) {
         .attr("class", "y axis label");
     }
 
+function update_bar(year, data_FOSL, data_REN, data){
+
+    var type = ['Fossil', 'Renewable']
+    var index = year - 1960
+
+    var data_fosl = data_FOSL[index],
+        data_ren = data_REN[index];
+
+    var value_fosl = data_fosl['VALUE'],
+        value_ren = data_ren['VALUE']
+        values = [value_ren, value_fosl];
+
+    var country = [data_fosl['CC'],data_ren['CC']]
+
+    console.log(country, data_fosl)
+
+    xb1.domain(country.length);
+    xb.domain(type).rangeRound([0, x0.rangeBand()]);
+    yb.domain([0, d3.max(values, function(d) { return d })]);
+
+    bar_svg.selectAll(".axis").remove();
+
+    bar_svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+    var yaxis = bar_svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+
+    // add a label to the y axis
+    bar_svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0 - 60)
+        .attr("x", 0 - (height / 2))
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text('Percentual difference for selected year')
+        .attr("class", "y axis label");
+
+    var width = 2000
+
+    var bar_width = width / values.length
+
+    var bar = bar_svg.selectAll(".bars")
+        .data(values)
+        .enter().append("rect")
+            .attr('class', 'bars')
+            .attr("x", function(d, i) { return i*20; })
+            .attr("y", function(d) { return y(d); })
+            .attr("height", function(d) { console.log(y(d)); return 700 - y(d); })
+            .attr("width", 18);
+
+}
+
+function type(d) {
+  d.VALUE = +d.VALUE; // coerce to number
+  return d;
+}
+
 /** VARIABLES */
 
 // margin for map
@@ -108,10 +170,14 @@ var margin = {top: 50, right: 80, bottom: 40, left: 160},
 // margin for line
 var margin_line = {top: 50, right: 80, bottom: 40, left: 160},
      width_line = 2000 - margin.left - margin.right,
-     height_line = 1200 - margin.top - margin.bottom;
+     height_line = 800 - margin.top - margin.bottom;
 
 var x = d3.time.scale().range([0, width]),
     y = d3.scale.linear().range([height, 0]);
+
+var xb = d3.scale.ordinal()
+    .rangeRoundBands([0, width_line], .1),
+    yb = d3.scale.linear().range([height, 0]);
 
 var xAxis = d3.svg.axis().scale(x)
     .orient("bottom").ticks(5),
@@ -127,6 +193,29 @@ var line_svg = d3.select("body")
     .append("g")
         .attr("transform",
               "translate(" + margin.left + "," + margin.top + ")");
+
+var bar_svg = d3.select("body")
+    .append("svg")
+        .attr('class', 'bar_svg')
+        .attr('width', width_line)
+        .attr('height', height_line)
+    .append("g")
+        .attr('transform',
+              "translate(" + margin.left + "," + margin.top + ")");
+
+var color_bar = d3.scale.ordinal()
+    .range(["red",'green']);
+
+
+var init_year = 1960
+
+// slider
+d3.select("body").insert("p", ":first-child").append("input")
+  .attr("type", "range")
+  .attr("min", "1960")
+  .attr("max", "2017")
+  .attr("value", init_year)
+  .attr("id", "year");
 
 // parse the date / time
 var parseTime = d3.time.format("%Y").parse;
@@ -169,6 +258,8 @@ function analyze(error, FOSL, REN, META, DATA) {
 
     console.log(dataset)
 
+    var data_bar  = []
+
     // render map
     var map = new Datamap({
         element: document.getElementById('container'),
@@ -176,10 +267,23 @@ function analyze(error, FOSL, REN, META, DATA) {
             datamap.svg.selectAll('.datamaps-subunit').on('click', function(geo) {
                 id = geo.id;
                 data = filter_JSON(DATA,'CC',id);
-                data_FOSL = filter_JSON(FOSL,'CC',id)
-                data_REN = filter_JSON(REN,'CC',id)
                 update_graph(data)
-                // updateGraph(data_FOSL)
+
+                // update data for bar_chart
+                data_bar.push(data)
+                console.log(data_bar)
+
+                // delete data if clicked on and already in data_bar
+                
+
+                // use slider
+                d3.select("#year").on("input", function() {
+                    year = this.value
+                    data_FOSL = filter_JSON(FOSL,'CC',id);
+                    data_REN = filter_JSON(REN,'CC',id)
+                    data = filter_JSON(DATA,'CC',id)
+                    update_bar(year, data_FOSL, data_REN, data)
+                });
             });
         },
         projection: 'mercator', // big world map
