@@ -45,3 +45,7 @@
     Bar chart is eindelijk gelinkt. die moet nu alleen nog goed getekend worden. de data die nu wordt meegegeven
     is nu nog maar van een land. Er bestaat een dataset met alle aangeklikte landen. deze moet nog een remove
     functie krijgen.
+
+## 25-1-2018
+
+    tekenen van de bar chart lukt maar is nog niet optimaal.

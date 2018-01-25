@@ -18,6 +18,7 @@
 
 
 <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script> -->
+<svg class="chart"></svg>
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
 <script src="/data/datamaps.world.min.js"></script>
@@ -101,57 +102,106 @@ function update_graph(data) {
 
 function update_bar(year, data_FOSL, data_REN, data){
 
+
     var type = ['Fossil', 'Renewable']
-    var index = year - 1960
+    var values = []
+    var color = d3.scale.ordinal().range(['red','green']);
+    var gap = 10
+    var labelspace = 100
 
-    var data_fosl = data_FOSL[index],
-        data_ren = data_REN[index];
+    // get values according to year and clicked lands
+    for (i = 0; i < data.length; i++){
+        for (j = 0; j < data[i].length; j++){
+            if (data[i][j]['YEAR'] == year){
+                values.push(data[i][j])
+            }
+        }
+    }
 
-    var value_fosl = data_fosl['VALUE'],
-        value_ren = data_ren['VALUE']
-        values = [value_ren, value_fosl];
+    console.log(values)
 
-    var country = [data_fosl['CC'],data_ren['CC']]
+    var country = values.map(function (d) {return d.CC});
 
-    console.log(country, data_fosl)
+    grouped_values = []
 
-    xb1.domain(country.length);
-    xb.domain(type).rangeRound([0, x0.rangeBand()]);
-    yb.domain([0, d3.max(values, function(d) { return d })]);
+    // group data
+    for (i = 0; i < values.length - 1; i++){
+        if (values[i]['CC'] == values[i + 1]['CC']){
+            grouped_values.push([values[i],values[i + 1]])
+        }
+    }
 
-    bar_svg.selectAll(".axis").remove();
+    var zipped_data = []
 
-    bar_svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis);
+    for (var i = 0; i < grouped_values.length; i++){
+        for (var j = 0; j < grouped_values[i].length; j++){
+            zipped_data.push(grouped_values[i][j]['VALUE'])
+        }
+    }
 
-    var yaxis = bar_svg.append("g")
+    var chart_height = height_bar * zipped_data.length + gap * grouped_values.length;
+    var group_height = height_bar * grouped_values.length
+
+    var x = d3.scale.linear()
+        .domain([0, d3.max(zipped_data)])
+        .range([0, width_bar]);
+
+    var y = d3.scale.linear()
+        .range([chart_height + gap, 0]);
+
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .tickFormat('')
+        .tickSize(0)
+        .orient("left");
+
+    // Specify the chart area and dimensions
+    var chart = d3.select(".chart")
+        .attr("width", width_bar)
+        .attr("height", chart_height);
+
+    // Create bars
+    var bar = chart.selectAll("g")
+        .data(zipped_data)
+        .enter().append("g")
+        .attr("transform", function(d, i) {
+            return "translate(" + labelspace + "," + (i * height_bar + gap * (0.5 + Math.floor(i/grouped_values.length))) + ")";
+        });
+
+    // Create rectangles of the correct width
+    bar.append("rect")
+        .attr("fill", function(d,i) {
+            return color(i % grouped_values.length); })
+        .attr("class", "bar")
+        .attr('id', function(d, i) { return 'b' + i})
+        .attr("width", x )
+        .attr("height", height_bar - 1);
+
+    chart.append("g")
         .attr("class", "y axis")
-        .call(yAxis)
+        .attr("transform", "translate(" + labelspace + ", " + -gap/2 + ")")
+        .call(yAxis);
 
-    // add a label to the y axis
-    bar_svg.append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 0 - 60)
-        .attr("x", 0 - (height / 2))
-        .attr("dy", "1em")
-        .style("text-anchor", "middle")
-        .text('Percentual difference for selected year')
-        .attr("class", "y axis label");
+    // Add text label in bar
+    bar.append("text")
+        .attr("x", function(d) { return x(d) - 3; })
+        .attr("y", height_bar / 2)
+        .attr("fill", "black")
+        .attr("dy", ".35em")
+        .text(function(d) { return d; });
 
-    var width = 2000
+    // Draw labels
+    bar.append("text")
+        .attr("class", "label")
+        .attr("x", function(d) { return - 10; })
+        .attr("y", group_height / 2)
+        .attr("dy", ".35em")
+        .text(function(d,i) {
+          if (i % grouped_values.length === 0)
+            return country[Math.floor(i/grouped_v   alues.length)];
+          else
+            return ""});
 
-    var bar_width = width / values.length
-
-    var bar = bar_svg.selectAll(".bars")
-        .data(values)
-        .enter().append("rect")
-            .attr('class', 'bars')
-            .attr("x", function(d, i) { return i*20; })
-            .attr("y", function(d) { return y(d); })
-            .attr("height", function(d) { console.log(y(d)); return 700 - y(d); })
-            .attr("width", 18);
 
 }
 
@@ -169,15 +219,21 @@ var margin = {top: 50, right: 80, bottom: 40, left: 160},
 
 // margin for line
 var margin_line = {top: 50, right: 80, bottom: 40, left: 160},
-     width_line = 2000 - margin.left - margin.right,
-     height_line = 800 - margin.top - margin.bottom;
+    width_line = 2000 - margin.left - margin.right,
+    height_line = 800 - margin.top - margin.bottom;
+
+// margin for line
+var margin_bar = {top: 0, right: 0, bottom: 0, left: 0},
+    width_bar = 2000 - margin_bar.left - margin_bar.right,
+    height_bar = 20 - margin_bar.top - margin_bar.bottom;
 
 var x = d3.time.scale().range([0, width]),
     y = d3.scale.linear().range([height, 0]);
 
 var xb = d3.scale.ordinal()
-    .rangeRoundBands([0, width_line], .1),
-    yb = d3.scale.linear().range([height, 0]);
+    .rangeRoundBands([0, width_bar], .1),
+    xb1 = d3.scale.ordinal(),
+    yb = d3.scale.linear().range([height_bar, 0]);
 
 var xAxis = d3.svg.axis().scale(x)
     .orient("bottom").ticks(5),
@@ -207,12 +263,12 @@ var color_bar = d3.scale.ordinal()
     .range(["red",'green']);
 
 
-var init_year = 1960
+var init_year = 1961
 
 // slider
 d3.select("body").insert("p", ":first-child").append("input")
   .attr("type", "range")
-  .attr("min", "1960")
+  .attr("min", "1961")
   .attr("max", "2017")
   .attr("value", init_year)
   .attr("id", "year");
@@ -256,8 +312,6 @@ function analyze(error, FOSL, REN, META, DATA) {
             dataset[iso] = { income_class: value, fillColor: paletteScale(value) };
         });
 
-    console.log(dataset)
-
     var data_bar  = []
 
     // render map
@@ -269,12 +323,20 @@ function analyze(error, FOSL, REN, META, DATA) {
                 data = filter_JSON(DATA,'CC',id);
                 update_graph(data)
 
-                // update data for bar_chart
-                data_bar.push(data)
-                console.log(data_bar)
 
-                // delete data if clicked on and already in data_bar
-                
+                data_bar.push(data)
+                j = 0
+
+                // delete element if occurs more than 1 time
+                for (var i = 1; i < data_bar.length; i++){
+                    if (data_bar[i][0] == data[0]){
+                        j += 1
+                        if (j > 1){
+                            console.log(data_bar[i][0])
+                            data_bar.splice(i,1)
+                        }
+                    }
+                }
 
                 // use slider
                 d3.select("#year").on("input", function() {
@@ -282,7 +344,7 @@ function analyze(error, FOSL, REN, META, DATA) {
                     data_FOSL = filter_JSON(FOSL,'CC',id);
                     data_REN = filter_JSON(REN,'CC',id)
                     data = filter_JSON(DATA,'CC',id)
-                    update_bar(year, data_FOSL, data_REN, data)
+                    update_bar(year, data_FOSL, data_REN, data_bar)
                 });
             });
         },
