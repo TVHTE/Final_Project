@@ -49,3 +49,8 @@
 ## 25-1-2018
 
     tekenen van de bar chart lukt maar is nog niet optimaal.
+
+## 26-1-2018
+
+    Bar chart staat nu alleen nog procentuele verandering toevoegen en het tekenen van negative waardes.
+    de translate fucntie met een gap tussen de groepen werkt nog niet helemaal..

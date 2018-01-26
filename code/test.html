@@ -18,7 +18,6 @@
 
 
 <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script> -->
-<svg class="chart"></svg>
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
 <script src="/data/datamaps.world.min.js"></script>
@@ -100,25 +99,35 @@ function update_graph(data) {
         .attr("class", "y axis label");
     }
 
-function update_bar(year, data_FOSL, data_REN, data){
+function update_bar(year, data){
 
 
     var type = ['Fossil', 'Renewable']
     var values = []
+    var percentage = []
     var color = d3.scale.ordinal().range(['red','green']);
     var gap = 10
     var labelspace = 100
+    var diff_values = []
 
     // get values according to year and clicked lands
     for (i = 0; i < data.length; i++){
         for (j = 0; j < data[i].length; j++){
             if (data[i][j]['YEAR'] == year){
                 values.push(data[i][j])
+                percentage.push([data[i][j],data[i][j - 1]])
             }
         }
     }
 
-    console.log(values)
+    for (var i = 0; i < percentage.length; i++){
+        var now = percentage[i][0]['VALUE']
+        var old = percentage[i][1]['VALUE']
+        var diff = (((now - old) / old) * 100)
+        diff_values.push(diff)
+    }
+
+    console.log(diff_values)
 
     var country = values.map(function (d) {return d.CC});
 
@@ -144,7 +153,9 @@ function update_bar(year, data_FOSL, data_REN, data){
 
     var x = d3.scale.linear()
         .domain([0, d3.max(zipped_data)])
-        .range([0, width_bar]);
+        .range([0, 1000]);
+
+    console.log(d3.max(zipped_data))
 
     var y = d3.scale.linear()
         .range([chart_height + gap, 0]);
@@ -155,29 +166,24 @@ function update_bar(year, data_FOSL, data_REN, data){
         .tickSize(0)
         .orient("left");
 
-    // Specify the chart area and dimensions
-    var chart = d3.select(".chart")
-        .attr("width", width_bar)
-        .attr("height", chart_height);
-
-    // Create bars
-    var bar = chart.selectAll("g")
+    var bar = bar_svg.selectAll('bar')
+        .remove()
         .data(zipped_data)
-        .enter().append("g")
+        .enter().append('g')
+        .attr('class', 'bar')
         .attr("transform", function(d, i) {
-            return "translate(" + labelspace + "," + (i * height_bar + gap * (0.5 + Math.floor(i/grouped_values.length))) + ")";
+            console.log(Math.floor(i/grouped_values.length));
+            return "translate(" + labelspace + "," + (i * height_bar + gap * 2) + ")";
         });
 
-    // Create rectangles of the correct width
-    bar.append("rect")
+    bar.append('rect')
         .attr("fill", function(d,i) {
             return color(i % grouped_values.length); })
-        .attr("class", "bar")
         .attr('id', function(d, i) { return 'b' + i})
         .attr("width", x )
-        .attr("height", height_bar - 1);
+        .attr("height", height_bar - 1)
 
-    chart.append("g")
+    bar_svg.append("g")
         .attr("class", "y axis")
         .attr("transform", "translate(" + labelspace + ", " + -gap/2 + ")")
         .call(yAxis);
@@ -188,20 +194,17 @@ function update_bar(year, data_FOSL, data_REN, data){
         .attr("y", height_bar / 2)
         .attr("fill", "black")
         .attr("dy", ".35em")
-        .text(function(d) { return d; });
+        .text(function(d) { return Math.round(d); });
 
     // Draw labels
     bar.append("text")
         .attr("class", "label")
-        .attr("x", function(d) { return - 10; })
-        .attr("y", group_height / 2)
+        .attr("x", - 50)
+        .attr("y", function(d, i) { return i })
         .attr("dy", ".35em")
         .text(function(d,i) {
-          if (i % grouped_values.length === 0)
-            return country[Math.floor(i/grouped_v   alues.length)];
-          else
-            return ""});
-
+          return country[i];
+      });
 
 }
 
@@ -222,7 +225,7 @@ var margin_line = {top: 50, right: 80, bottom: 40, left: 160},
     width_line = 2000 - margin.left - margin.right,
     height_line = 800 - margin.top - margin.bottom;
 
-// margin for line
+// margin for bar
 var margin_bar = {top: 0, right: 0, bottom: 0, left: 0},
     width_bar = 2000 - margin_bar.left - margin_bar.right,
     height_bar = 20 - margin_bar.top - margin_bar.bottom;
@@ -253,14 +256,8 @@ var line_svg = d3.select("body")
 var bar_svg = d3.select("body")
     .append("svg")
         .attr('class', 'bar_svg')
-        .attr('width', width_line)
-        .attr('height', height_line)
-    .append("g")
-        .attr('transform',
-              "translate(" + margin.left + "," + margin.top + ")");
-
-var color_bar = d3.scale.ordinal()
-    .range(["red",'green']);
+        .attr("width", width_line)
+        .attr("height", height_line)
 
 
 var init_year = 1961
@@ -314,6 +311,7 @@ function analyze(error, FOSL, REN, META, DATA) {
 
     var data_bar  = []
 
+
     // render map
     var map = new Datamap({
         element: document.getElementById('container'),
@@ -323,7 +321,6 @@ function analyze(error, FOSL, REN, META, DATA) {
                 data = filter_JSON(DATA,'CC',id);
                 update_graph(data)
 
-
                 data_bar.push(data)
                 j = 0
 
@@ -332,7 +329,6 @@ function analyze(error, FOSL, REN, META, DATA) {
                     if (data_bar[i][0] == data[0]){
                         j += 1
                         if (j > 1){
-                            console.log(data_bar[i][0])
                             data_bar.splice(i,1)
                         }
                     }
@@ -341,10 +337,7 @@ function analyze(error, FOSL, REN, META, DATA) {
                 // use slider
                 d3.select("#year").on("input", function() {
                     year = this.value
-                    data_FOSL = filter_JSON(FOSL,'CC',id);
-                    data_REN = filter_JSON(REN,'CC',id)
-                    data = filter_JSON(DATA,'CC',id)
-                    update_bar(year, data_FOSL, data_REN, data_bar)
+                    update_bar(year, data_bar)
                 });
             });
         },
