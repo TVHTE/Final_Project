@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Final project minor programming</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="style.css">
+
+        <nav>
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="project_main.html">OIL</a>
+                <ul class="nav navbar-nav">
+                  <li class="active"><a href="project_main.html">Home</a></li>
+
+                  <li><a href="graphics.html">Graphics</a></li>
+                  <li><a href="about.html">About</a></li>
+                  <li><a href="design.html">Design</a></li>
+                </ul>
+                </div>
+            </div>
+        </nav>
+
+        <script src="https://d3js.org/d3.v3.min.js"></script>
+        <script src="https://d3js.org/queue.v1.min.js"></script>
+        <script src="https://d3js.org/d3-time-format.v2.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+        <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+        <script src="https://d3js.org/d3-time-format.v2.min.js"></script>
+
+    </head>
+
+    <body>
+
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12" id="datamap"></div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12" id="slider"></div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6" id="line"></div>
+            <div class="col-sm-6" id="bar"></div>
+          </div>
+        </div>
+
+        <script src="/data/datamaps.world.min.js"></script>
+
+        <script src="main.js"></script>
+
+        <script src="functions/bar_graph.js"></script>
+        <script src="functions/line_graph.js"></script>
+        <script src="functions/filter_data.js"></script>
+
+
+    </body>
+</html>

@@ -15,8 +15,6 @@
 
 </style>
 
-
-
 <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script> -->
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
@@ -44,6 +42,7 @@ function filter_JSON(json, key, value) {
 // update the graph according to selected country
 function update_graph(data) {
     var color = d3.scale.ordinal().range(['red','green']);
+    var type = ['Fossil', 'Renewable'];
 
     // scale the range of the data
     x.domain(d3.extent(data, function(d) { return d.YEAR; }));
@@ -97,7 +96,32 @@ function update_graph(data) {
         .style("text-anchor", "middle")
         .text('% of total energy produced')
         .attr("class", "y axis label");
-    }
+
+
+    // add legend to line chart
+    var legend = line_svg.selectAll('g')
+        .data(data)
+        .enter()
+        .append('g')
+        .attr('class', 'legend');
+
+    legend.append('rect')
+        .attr('x', width - 20)
+        .attr('y', function(d, i){ return i *  20;})
+        .attr('width', 10)
+        .attr('height', 10)
+        .style('fill', function(d) {
+          return color(d.TYPE);
+        });
+
+    legend.append('text')
+        .attr('x', width - 8)
+        .attr('y', function(d, i){ return (i *  20) + 9;})
+        .text(function(d){ return d.TYPE; });
+
+}
+
+
 
 function update_bar(year, data){
 
@@ -127,8 +151,6 @@ function update_bar(year, data){
         diff_values.push(diff)
     }
 
-    console.log(diff_values)
-
     var country = values.map(function (d) {return d.CC});
 
     grouped_values = []
@@ -139,6 +161,8 @@ function update_bar(year, data){
             grouped_values.push([values[i],values[i + 1]])
         }
     }
+
+    console.log(grouped_values)
 
     var zipped_data = []
 
@@ -155,8 +179,6 @@ function update_bar(year, data){
         .domain([0, d3.max(zipped_data)])
         .range([0, 1000]);
 
-    console.log(d3.max(zipped_data))
-
     var y = d3.scale.linear()
         .range([chart_height + gap, 0]);
 
@@ -166,8 +188,10 @@ function update_bar(year, data){
         .tickSize(0)
         .orient("left");
 
-    var bar = bar_svg.selectAll('bar')
+    bar_svg.selectAll('.bar')
         .remove()
+
+    var bar = bar_svg.selectAll('.bar')
         .data(zipped_data)
         .enter().append('g')
         .attr('class', 'bar')
@@ -178,7 +202,7 @@ function update_bar(year, data){
 
     bar.append('rect')
         .attr("fill", function(d,i) {
-            return color(i % grouped_values.length); })
+            return color(i % 2); })
         .attr('id', function(d, i) { return 'b' + i})
         .attr("width", x )
         .attr("height", height_bar - 1)
@@ -190,9 +214,9 @@ function update_bar(year, data){
 
     // Add text label in bar
     bar.append("text")
-        .attr("x", function(d) { return x(d) - 3; })
+        .attr("x", function(d) { return x(d) - 20; })
         .attr("y", height_bar / 2)
-        .attr("fill", "black")
+        .attr("fill", "white")
         .attr("dy", ".35em")
         .text(function(d) { return Math.round(d); });
 
@@ -206,11 +230,6 @@ function update_bar(year, data){
           return country[i];
       });
 
-}
-
-function type(d) {
-  d.VALUE = +d.VALUE; // coerce to number
-  return d;
 }
 
 /** VARIABLES */
@@ -256,8 +275,8 @@ var line_svg = d3.select("body")
 var bar_svg = d3.select("body")
     .append("svg")
         .attr('class', 'bar_svg')
-        .attr("width", width_line)
-        .attr("height", height_line)
+        .attr("width", width_bar)
+        .attr("height", height)
 
 
 var init_year = 1961
@@ -272,11 +291,6 @@ d3.select("body").insert("p", ":first-child").append("input")
 
 // parse the date / time
 var parseTime = d3.time.format("%Y").parse;
-
-// define the line
-var line_REN = d3.svg.line()
-    .x(function(d) { return x(d.YEAR); })
-    .y(function(d) { return y(d.VALUE); });
 
 var line = d3.svg.line()
     .x(function(d) { return x(d.YEAR); })
