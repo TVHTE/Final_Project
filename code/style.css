@@ -1,5 +1,7 @@
 <style>
 
+    min-height:500px;
+
     .axis path,
     .axis line {
         fill: none;
@@ -7,9 +9,61 @@
         stroke-width: 1;
         shape-rendering: crispEdges;
     }
+
+    path {
+        stroke: #ccc;
+        stroke-width: 2;
+        fill: none;
+    }
+
+
     .line {
         stroke-width: 2;
         fill: none;
     }
+
+    .legend_container{
+        font: 15px sans-serif;
+    }
+
+    /* SLIDER */
+
+    /* The slider itself */
+    .slider {
+        -webkit-appearance: none;  /* Override default CSS styles */
+        appearance: none;
+        width: 100%; /* Full-width */
+        height: 25px; /* Specified height */
+        background: #d3d3d3; /* Grey background */
+        outline: none; /* Remove outline */
+        opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+        -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+        transition: opacity .2s;
+    }
+    /* Mouse-over effects */
+    .slider:hover {
+        opacity: 1; /* Fully shown on mouse-over */
+    }
+    .slider::-webkit-slider-thumb {
+        -webkit-appearance: none; /* Override default look */
+        appearance: none;
+        width: 25px; /* Set a specific slider handle width */
+        height: 25px; /* Slider handle height */
+        background: #7e9a9a; /* Green background */
+        cursor: pointer; /* Cursor on hover */
+    }
+    .slider::-moz-range-thumb {
+        width: 25px; /* Set a specific slider handle width */
+        height: 25px; /* Slider handle height */
+        background: #4CAF50; /* Green background */
+        cursor: pointer; /* Cursor on hover */
+    }
+
+    /* BAR */
+    .bar {
+        padding-top: 20px
+        padding-bottom: 20px
+    }
+
 
 </style>

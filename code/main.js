@@ -29,18 +29,15 @@ var xAxis = d3.svg.axis().scale(x)
     .orient("left").ticks(5);
 
 var map_svg = d3.select("#datamap")
-    .attr("width", "100%")
-    .attr("height", "100%")
-    .attr("viewBox", "0 0 2000 10000")
-    .attr("perserveAspectRatio", "xMaxYMax")
-    .attr("id", "map");
+    .attr("width", 5000)
+    .attr("height", 2000);
 
 var line_svg = d3.select("#line")
     .append("svg")
         .attr('class', 'line_svg')
         .attr("width", "100%")
         .attr("height", "100%")
-        .attr("viewBox", "0 0 1200 900")
+        .attr("viewBox", "0 0 1100 700")
         .attr("perserveAspectRatio", "xMaxYMax")
         .attr("id", "line");
 
@@ -48,7 +45,7 @@ var bar_svg = d3.select("#bar")
     .append("svg")
         .attr("width", "100%")
         .attr("height", "100%")
-        .attr("viewBox", "0 0 1200 900")
+        .attr("viewBox", "0 0 1100 700")
         .attr("perserveAspectRatio", "xMaxYMax")
         .attr("id", "bar");
 
@@ -57,6 +54,7 @@ var init_year = 1961
 // slider
 d3.select("#slider").insert("p", ":first-child")
     .append("input")
+        .attr("class", "slider")
         .attr("type", "range")
         .attr("min", "1961")
         .attr("max", "2017")
@@ -113,7 +111,7 @@ window.onload = function(){
 
         // render map
         var map = new Datamap({
-            element: document.getElementById('map'),
+            element: document.getElementById('datamap'),
             done: function(datamap) {
                 datamap.svg.selectAll('.datamaps-subunit').on('click', function(geo) {
                     id = geo.id;
@@ -165,5 +163,12 @@ window.onload = function(){
                 }
             }
         });
+
+        var data_maps = d3.select(".datamap")
+        .attr("height", 330)
+
+        // // svg repositioning
+        $("datamap").css({top: 200, position:'absolute'});
+
     }
 }

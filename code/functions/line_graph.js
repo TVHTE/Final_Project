@@ -1,16 +1,16 @@
+// update the graph according to selected country
 function update_graph(data) {
-
     var color = d3.scale.ordinal().range(['red','green']);
     var type = ['Fossil', 'Renewable'];
-
-    var x = d3.time.scale().range([0, width]),
-        y = d3.scale.linear().range([height, 0]);
 
     // scale the range of the data
     x.domain(d3.extent(data, function(d) { return d.YEAR; }));
     y.domain([0, 100]);
 
     line_svg.selectAll("text").remove()
+
+    var y_axis_line = d3.svg.axis().scale(y)
+    .orient("left").ticks(5);
 
     // nest the entries by country
     dataNest = d3.nest()
@@ -45,9 +45,10 @@ function update_graph(data) {
         .attr("transform", "translate(0," + height + ")")
         .call(xAxis);
 
-    var yaxis = line_svg.append("g")
+    line_svg.append("g")
         .attr("class", "y axis")
-        .call(yAxis)
+        .attr("transform", "translate(0," + height + ")")
+        .call(y_axis_line);
 
     // add a label to the y axis
     line_svg.append("text")
@@ -59,25 +60,61 @@ function update_graph(data) {
         .text('% of total energy produced')
         .attr("class", "y axis label");
 
-    // add legend to line chart
-    var legend = line_svg.selectAll('g')
-        .data(data)
-        .enter()
-        .append('g')
-        .attr('class', 'legend');
+    // new legend
+    var legend = d3.select("#legend")
+        .selectAll("text")
+        .data(dataNest, function(d){return d.key});
 
-    legend.append('rect')
-        .attr('x', width - 20)
-        .attr('y', function(d, i){ return i *  20;})
-        .attr('width', 10)
-        .attr('height', 10)
-        .style('fill', function(d) {
-          return color(d.TYPE);
-        });
+    //checkboxes
+    legend.enter().append("rect")
+        .attr("width", 10)
+        .attr("height", 10)
+        .attr("x", 0)
+        .attr("y", function (d, i) { return 0 +i*15; })  // spacing
+        .attr("fill",function(d) {
+            return color(d.key);
+            })
+        .attr("class", function(d,i){return "legendcheckbox " + d.key})
+        .on("click", function(d){
 
-    legend.append('text')
-        .attr('x', width - 8)
-        .attr('y', function(d, i){ return (i *  20) + 9;})
-        .text(function(d){ return d.TYPE; });
+            d.active = !d.active;
+
+            d3.select(this).attr("fill", function(d){
+                if(d3.select(this).attr("fill")  == "#ccc"){
+                    return color(d.TYPE);
+                }else {
+                    return "#ccc";
+                }
+            })
+
+            var result = dataNest.filter(function(val,idx, arr){
+                return $("." + val.key).attr("fill") != "#ccc"
+                // matching the data with selector status
+            })
+
+            // Hide or show the lines based on the ID
+            line_svg.selectAll(".line").data(result, function(d){ return d.key;})
+                .enter()
+                .append("path")
+                .attr("class", "line")
+                .style("stroke", function(d,i) { return d.color = color(d.key); })
+                .attr("d", function(d){
+                    console.log(line(d.values))
+                    return line(d.values);
+                });
+
+            line_svg.selectAll(".line").data(result, function(d){return d.key}).exit().remove()
+
+        })
+
+        // Add the Legend text
+    legend.enter().append("text")
+        .attr("x", 15)
+        .attr("y", function(d,i){return 10 +i*15;})
+        .attr("class", "legend");
+
+   legend.transition()
+        .style("fill", "#777" )
+        .text(function(d){return d.key;});
 
 }

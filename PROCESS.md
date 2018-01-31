@@ -54,3 +54,12 @@
 
     Bar chart staat nu alleen nog procentuele verandering toevoegen en het tekenen van negative waardes.
     de translate fucntie met een gap tussen de groepen werkt nog niet helemaal..
+
+## 30-1-2018
+
+    legenda en assen toevoegen aan de charts en de html pagina indelen.
+
+## 31-1-2018
+
+    het is lastiger dan gedacht om een clear knop toe te voegen die ook daadwerkelijk de data verwijderd
+    van de selectie. Er is een clickable legend toegevoegd voor extra interactiviteit

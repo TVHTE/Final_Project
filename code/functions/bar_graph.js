@@ -26,7 +26,9 @@ function update_bar(year, data){
         diff_values.push(diff)
     }
 
-    var country = values.map(function (d) {return d.CC});
+    var country = values.map(function (d) {
+        return d.CC
+    });
 
     grouped_values = []
 
@@ -36,8 +38,6 @@ function update_bar(year, data){
             grouped_values.push([values[i],values[i + 1]])
         }
     }
-
-    console.log(grouped_values)
 
     var zipped_data = []
 
@@ -61,7 +61,12 @@ function update_bar(year, data){
         .scale(y)
         .tickFormat('')
         .tickSize(0)
-        .orient("left");
+        .orient("left")
+
+    var xAxis = d3.svg.axis()
+        .scale(xb)
+        .orient("top")
+
 
     bar_svg.selectAll('.bar')
         .remove()
@@ -71,35 +76,42 @@ function update_bar(year, data){
         .enter().append('g')
         .attr('class', 'bar')
         .attr("transform", function(d, i) {
-            console.log(Math.floor(i/grouped_values.length));
             return "translate(" + labelspace + "," + (i * height_bar + gap * 2) + ")";
         });
 
     bar.append('rect')
         .attr("fill", function(d,i) {
-            return color(i % 2); })
-        .attr('id', function(d, i) { return 'b' + i})
+            return color(i % 2);
+        })
+        .attr('id', function(d, i) {
+            return 'b' + i
+        })
         .attr("width", x )
         .attr("height", height_bar - 1)
 
-    bar_svg.append("g")
+    bar.append("g")
         .attr("class", "y axis")
-        .attr("transform", "translate(" + labelspace + ", " + -gap/2 + ")")
         .call(yAxis);
 
     // Add text label in bar
     bar.append("text")
-        .attr("x", function(d) { return x(d) - 20; })
+        .attr("x", function(d) {
+            return x(d) - 20;
+        })
         .attr("y", height_bar / 2)
         .attr("fill", "white")
         .attr("dy", ".35em")
-        .text(function(d) { return Math.round(d); });
+        .text(function(d) {
+            return Math.round(d);
+        });
 
     // Draw labels
     bar.append("text")
         .attr("class", "label")
         .attr("x", - 50)
-        .attr("y", function(d, i) { return i })
+        .attr("y", function(d, i) {
+             return i
+         })
         .attr("dy", ".35em")
         .text(function(d,i) {
           return country[i];
