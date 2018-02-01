@@ -13,9 +13,9 @@ The visualisation of the world's environment is still lacking attention. This is
 
 ## Solution
 
-![alt text](https://github.com/TVHTE/Final_Project/blob/master/doc/1.png)
-![alt text](https://github.com/TVHTE/Final_Project/blob/master/doc/2.png)
-![alt text](https://github.com/TVHTE/Final_Project/blob/master/doc/3.png)
+![alt text](https://github.com/TVHTE/Final_Project/blob/master/doc/one.png)
+![alt text](https://github.com/TVHTE/Final_Project/blob/master/doc/two.png)
+![alt text](https://github.com/TVHTE/Final_Project/blob/master/doc/three.png)
 
 ## Prerequisites
 
