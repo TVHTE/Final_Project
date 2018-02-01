@@ -24,6 +24,13 @@ When a country is selected the change in energy sources is showed in a line grap
 when more countries are selected and the slider is used, the map visualizes the difference in energy sources and the countries can be compared
 ![alt text](https://github.com/TVHTE/Final_Project/blob/master/doc/three.png)
 
-## Prerequisites
+through this process the user is informed with not only the characteristics of a country, but also the difference between countries.
+Using the slider the increase of renewable energy in for example Europe can be clearly seen.
 
-Data: databank, worldbank
+## sources
+
+https://data.worldbank.org/
+
+https://d3js.org/
+
+https://getbootstrap.com/
