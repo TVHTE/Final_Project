@@ -1,10 +1,11 @@
 # Final Project
 
-University of Amsterdam
+Copyright (c) 2018 Toon van Holthe tot Echten
 
-Minor Programming
-
-Toon van Holthe tot Echten - 10798595
+##### University of Amsterdam
+##### Minor Programming
+##### Toon van Holthe tot Echten
+##### Visualization of origin of energy sources (fossil and renewable) for the world
 
 ## Problem statement
 
@@ -12,10 +13,12 @@ The visualisation of the world's environment is still lacking attention. This is
 
 ## Solution
 
-Energy consumption trends
+
 
 ### Sketch
-![alt text](https://github.com/TVHTE/Final_Project/blob/master/doc/schets.png)
+![alt text](https://github.com/TVHTE/Final_Project/blob/master/doc/1.png)
+![alt text](https://github.com/TVHTE/Final_Project/blob/master/doc/2.png)
+![alt text](https://github.com/TVHTE/Final_Project/blob/master/doc/3.png)
 
 ## Prerequisites
 
