@@ -87,7 +87,7 @@ window.onload = function(){
     queue()
         .defer(d3.json, "/data/DATA_FOSL.json")
         .defer(d3.json, "/data/DATA_REN.json")
-        .defer(d3.json, "/data/META.json")
+        .defer(d3.json, "https://rawgit.com/TVHTE/Final_Project/master/code/data/META.json")
         .defer(d3.json, "/data/data_project.json")
         .await(analyze);
 
