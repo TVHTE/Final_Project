@@ -10,7 +10,7 @@ function update_graph(data) {
     line_svg.selectAll("text").remove()
 
     var y_axis_line = d3.svg.axis().scale(y)
-    .orient("left").ticks(5);
+    .orient("right").ticks(5);
 
     // nest the entries by country
     dataNest = d3.nest()

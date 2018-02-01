@@ -26,7 +26,7 @@ var xb = d3.scale.ordinal()
 var xAxis = d3.svg.axis().scale(x)
     .orient("bottom").ticks(5),
     yAxis = d3.svg.axis().scale(y)
-    .orient("left").ticks(5);
+    .orient("right").ticks(5);
 
 var line_svg = d3.select("#line")
     .append("svg")
