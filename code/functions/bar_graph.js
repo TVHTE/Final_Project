@@ -111,7 +111,7 @@ function update_bar(year, data){
         .attr("class", "label")
         .attr("x", - 50)
         .attr("y", function(d, i) {
-             return i
+             return i 
          })
         .attr("dy", ".35em")
         .style("font-size", "20px")

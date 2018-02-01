@@ -49,17 +49,6 @@ function update_graph(data) {
         .attr("class", "y axis")
         .call(y_axis_line);
 
-    // add a label to the y axis
-    line_svg.append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 20)
-        .attr("x", 0 - (height / 2))
-        .attr("dy", "1em")
-        .style("text-anchor", "middle")
-        .style("font-size","30px")
-        .text('% of total energy produced')
-        .attr("class", "y axis label");
-
     // new legend
     var legend = d3.select("#legend")
         .selectAll("text")

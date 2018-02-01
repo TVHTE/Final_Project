@@ -61,6 +61,10 @@ d3.select("#slider").insert("p", ":first-child")
         .attr("perserveAspectRatio", "xMaxYMax")
         .attr("id", "year");
 
+d3.select("#graph_title")
+    .text("Percentage of total energy used (fossil & renewable) for selected country(left) and comparing countries(right)")
+    .style("font-size", "23px");
+
 // parse the date / time
 var parseTime = d3.time.format("%Y").parse;
 
@@ -167,5 +171,6 @@ window.onload = function(){
                 }
             }
         });
+        console.log(map.legend());
     }
 }

@@ -100,3 +100,19 @@ Linking different visualizations was also harder than expected. For a lot of
 graphs and charts examples are given. However, most of the time the input data
 which is used for these examples completely differ. In order to link everything
 nicely, the data needs to be reformatted several times.
+
+During the creation of the product there were some trade-offs. It would have been
+nice to see the percentual change in the source of the energy of the years as
+well as a change in the color of the world map according to GDP. It is a lot more
+work to design your own charts and linking them together in a nice way than
+making your data similar to data used for example graphs etc and using these for
+the visualizations.
+
+### Recap
+
+During the project there were some pitfalls. Linking the whole site was definately
+one of those. It was harder than expected to draw some bars and have them up and
+running on the selected data. A lot of time was spend on getting the links working
+properly this is why there wasn't much time for styling and css. However style is
+a very important part of the product, without style the site isn't very attractive.
+Next time more time will be spend on this part of the product.
