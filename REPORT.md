@@ -17,6 +17,19 @@ shown for a country, but also different countries can be compared.
 
 ## Technical design
 
+For this product there are several key components:
+
+    * Data
+    * Functions
+    * Linking
+    * Style
+
+The data is the basis of the product. Using functions, the data can be filtered
+and used for different visualizations (updated). The functions are also used to link
+everything together. To put all these components together, one main script is used.
+The main component for this poduct is the worldmap. Through the world map the data
+and the functions are linked. To visualise everything nicely, the style can be changed.
+
 ### Data
 
 The data was collected from the data worldbank. This database provides csv files
@@ -36,4 +49,42 @@ For each element there are four components :
     * "YEAR" - Year
     * "VALUE" - % of total energy produced
 
-With the
+### Functions
+
+In this product, the following functions are used:
+
+    * analyze()
+    * update_bar()
+    * update_graph()
+    * clear_all()
+    * filter_JSON()
+
+#### analyze()
+
+This function is the key component of the product. This function directs the
+users input in the right way. when using the slider or when clicking on the world
+map, other functions are called upon. Here also all the data is loaded and can
+be used for analysation.
+
+#### update_bar()
+
+Update_bar() requires two input arguments, the year selected using the slider
+and the data gained by clicking on the worldmap. For each country that is clicked,
+the data is added to the bar chart. this chart is constantly updated when using
+the slider.
+
+#### update_graph()
+
+In order to give an overview of which energy sources a country uses over time,
+the line graph is given. This function only requires one input argument since
+all years are given to show a complete overview.
+
+#### clear_all()
+
+This function clears the selected countries by removing the svg.
+
+#### filter_JSON()
+
+Depending on which country is selected, this function filters the 'raw' data.
+This function requires three input arguments, the raw data, the key on which
+to filter and the value. it returns the filtered data.
