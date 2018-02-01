@@ -1,3 +1,7 @@
+// Toon van Holthe tot Echten
+// UvA - Minor programmeren
+// Final project
+
 // update the graph according to selected country
 function update_graph(data) {
     var color = d3.scale.ordinal().range(['red','green']);

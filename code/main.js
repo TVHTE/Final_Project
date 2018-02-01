@@ -1,3 +1,7 @@
+// Toon van Holthe tot Echten
+// UvA - Minor programmeren
+// Final project
+
 /** VARIABLES */
 
 // margin for map
