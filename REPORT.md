@@ -4,7 +4,7 @@
 
 For the minor programming, The students were asked to create one final product.
 This product could either be an app for mobile devices or a website visualising
-data according to a chosen theme. For this final product the visualisation of
+data according to a chosen theme. For this final product the visualization of
 the difference between energy produced from fossil & renewable sources was
 chosen. A country can be selected by clicking on the world map. The changes
 of energy used over the years is shown in a line graph. And the difference
@@ -33,7 +33,7 @@ and the functions are linked. To visualise everything nicely, the style can be c
 ### Data
 
 The data was collected from the data worldbank. This database provides csv files
-with the data needed to create the visualisations. For this project two
+with the data needed to create the visualizations. For this project two
 databases were used:
 
     * % of total energy produced from fossil fuels
@@ -64,7 +64,8 @@ In this product, the following functions are used:
 This function is the key component of the product. This function directs the
 users input in the right way. when using the slider or when clicking on the world
 map, other functions are called upon. Here also all the data is loaded and can
-be used for analysation.
+be used for analysation. For the world map, datamaps is used which has a lot of
+built-in features.
 
 #### update_bar()
 
@@ -88,3 +89,14 @@ This function clears the selected countries by removing the svg.
 Depending on which country is selected, this function filters the 'raw' data.
 This function requires three input arguments, the raw data, the key on which
 to filter and the value. it returns the filtered data.
+
+### Challenges
+
+During this project, there were several challanges. At first ignorance is no
+bless when designing your own site. Things such as datamaps, are very helpful
+when the existence is known.
+
+Linking different visualizations was also harder than expected. For a lot of
+graphs and charts examples are given. However, most of the time the input data
+which is used for these examples completely differ. In order to link everything
+nicely, the data needs to be reformatted several times.
