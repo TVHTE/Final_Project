@@ -14,7 +14,6 @@
 
                   <li><a href="graphics.html">Graphics</a></li>
                   <li><a href="about.html">About</a></li>
-                  <li><a href="design.html">Design</a></li>
                 </ul>
                 </div>
             </div>
@@ -26,37 +25,41 @@
         <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
         <script src="//code.jquery.com/jquery-1.10.2.js"></script>
         <script src="https://d3js.org/d3-time-format.v2.min.js"></script>
+        <script src="/data/datamaps.world.min.js"></script>
 
     </head>
 
     <body>
 
-        <script src="/data/datamaps.world.min.js"></script>
 
         <div class="container">
             <div class="row">
-            <div class="col-sm-12" id="datamap"></div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12" id="slider"></div>
-        </div>
-        <div class="row">
-            <div class="col-sm-6" id="line"></div>
-            <div class="col-sm-6" id="bar"></div>
-        </div>
-        <div class="row">
-            <p> Clickable legend: </p>
-            <div class="col-sm-6" id="legend_container">
-                <svg id="legend"></svg>
+                <div class="col-sm-12" style="height:50px" id="title_container"></div>
             </div>
-            <div class="col-sm-6" id="clear">
-                <input name="CLEAR"
-                   type="button"
-                   value="CLEAR"
-                   onclick="clear_all()" />
+            <div class="row">
+                <div class="col-sm-12" id="datamap_container"
+                style="width: 1200px; height: 740px;"></div>
+            <div class="row">
+                <div class="col-sm-12" id="slider"></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6" id="line"></div>
+                <div class="col-sm-6" id="bar"></div>
+            </div>
+            <div class="row">
+                <p> Clickable legend: </p>
+                <div class="col-sm-6" id="legend_container">
+                    <svg id="legend"></svg>
+                </div>
+                <div class="col-sm-6" id="clear">
+                    <input name="CLEAR"
+                       type="button"
+                       value="CLEAR"
+                       onclick="clear_all()" />
+                </div>
             </div>
         </div>
-        </div>
+
 
         <script src="main.js"></script>
 

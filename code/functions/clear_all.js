@@ -1,10 +1,9 @@
-function clear_all(){
+function clear_all(data){
 
-  d3.selectAll(".bar")
+    d3.selectAll(".bar")
     .remove()
-	.transition().duration(100)
-		.attr("d", function(d){
-            console.log("d")
+    .transition().duration(100)
+    	.attr("d", function(d){
             return null;
         });
   }

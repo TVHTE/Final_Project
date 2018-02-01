@@ -47,16 +47,16 @@ function update_graph(data) {
 
     line_svg.append("g")
         .attr("class", "y axis")
-        .attr("transform", "translate(0," + height + ")")
         .call(y_axis_line);
 
     // add a label to the y axis
     line_svg.append("text")
         .attr("transform", "rotate(-90)")
-        .attr("y", 0 - 60)
+        .attr("y", 20)
         .attr("x", 0 - (height / 2))
         .attr("dy", "1em")
         .style("text-anchor", "middle")
+        .style("font-size","30px")
         .text('% of total energy produced')
         .attr("class", "y axis label");
 
@@ -99,7 +99,6 @@ function update_graph(data) {
                 .attr("class", "line")
                 .style("stroke", function(d,i) { return d.color = color(d.key); })
                 .attr("d", function(d){
-                    console.log(line(d.values))
                     return line(d.values);
                 });
 

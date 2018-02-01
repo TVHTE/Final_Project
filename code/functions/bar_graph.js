@@ -67,10 +67,11 @@ function update_bar(year, data){
         .scale(xb)
         .orient("top")
 
-
+    // remove previous bars
     bar_svg.selectAll('.bar')
         .remove()
 
+    // create bars
     var bar = bar_svg.selectAll('.bar')
         .data(zipped_data)
         .enter().append('g')
@@ -113,8 +114,8 @@ function update_bar(year, data){
              return i
          })
         .attr("dy", ".35em")
+        .style("font-size", "20px")
         .text(function(d,i) {
           return country[i];
-      });
-
+        })
 }

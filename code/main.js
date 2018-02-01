@@ -15,7 +15,7 @@ var margin_bar = {top: 0, right: 0, bottom: 0, left: 0},
     width_bar = 2000 - margin_bar.left - margin_bar.right,
     height_bar = 20 - margin_bar.top - margin_bar.bottom;
 
-var x = d3.time.scale().range([0, width]),
+var x = d3.time.scale().range([0, 1000]),
     y = d3.scale.linear().range([height, 0]);
 
 var xb = d3.scale.ordinal()
@@ -27,10 +27,6 @@ var xAxis = d3.svg.axis().scale(x)
     .orient("bottom").ticks(5),
     yAxis = d3.svg.axis().scale(y)
     .orient("left").ticks(5);
-
-var map_svg = d3.select("#datamap")
-    .attr("width", 5000)
-    .attr("height", 2000);
 
 var line_svg = d3.select("#line")
     .append("svg")
@@ -77,9 +73,13 @@ var line = d3.svg.line()
    .x(function(d) { return x(d.YEAR); })
    .y(function(d) { return y(d.VALUE); });
 
+// title
+d3.select("#title_container").insert("h2", ":first-child")
+    .text("Display of energy produced from fossil/renewable sources");
 
 window.onload = function(){
 
+    // load data
     queue()
         .defer(d3.json, "/data/DATA_FOSL.json")
         .defer(d3.json, "/data/DATA_REN.json")
@@ -87,6 +87,7 @@ window.onload = function(){
         .defer(d3.json, "/data/data_project.json")
         .await(analyze);
 
+    // create map
     function analyze(error, FOSL, REN, META, DATA) {
         if(error) { console.log(error); }
 
@@ -111,7 +112,7 @@ window.onload = function(){
 
         // render map
         var map = new Datamap({
-            element: document.getElementById('datamap'),
+            element: document.getElementById('datamap_container'),
             done: function(datamap) {
                 datamap.svg.selectAll('.datamaps-subunit').on('click', function(geo) {
                     id = geo.id;
@@ -135,6 +136,9 @@ window.onload = function(){
                     d3.select("#year").on("input", function() {
                         year = this.value
                         update_bar(year, data_bar)
+                        d3.select("#title_container")
+                            .text("Display of energy produced from fossil/renewable sources in " + year)
+                            .style("font-size", "30px");
                     });
                 });
             },
@@ -163,12 +167,5 @@ window.onload = function(){
                 }
             }
         });
-
-        var data_maps = d3.select(".datamap")
-        .attr("height", 330)
-
-        // // svg repositioning
-        $("datamap").css({top: 200, position:'absolute'});
-
     }
 }
